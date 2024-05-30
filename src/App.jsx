@@ -11,49 +11,48 @@ import CartProvider from "./Contexts/CartContext";
 import Preloader from "./components/Preloader";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import Envios from "./components/Envios";
-import Add from "./pages/Add"
+import Add from "./pages/Add";
+import Login from "./pages/Login";
+import { AuthProvider, useAuth } from "./Contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simular carga de datos con un temporizador
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1300);
 
-    // Limpia el temporizador cuando el componente se desmonta
     return () => clearTimeout(timer);
   }, []);
 
+
   return (
     <BrowserRouter>
-      <CartProvider>
-        {/* Aplica los estilos de fondo a un elemento separado para mejor aislamiento */}
-        <div className="contenedor-fondo">
-          {loading ? (
-            <Preloader loading />
-          ) : (
-            <>
-              <Header />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                
-                <Route
-                path="/detalle/:codigo"
-                element={<Detalle products={products} />}
-                />
-                <Route path="/Envios" element={<Envios />} />
-                <Route path="/add" element={<Add />} />
-
-              </Routes>
-              <Footer />
-            </>
-          )}
-        </div>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <div className="contenedor-fondo">
+            {loading ? (
+              <Preloader loading />
+            ) : (
+              <>
+                <Header />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/detalle/:codigo" element={<Detalle products={products} />} />
+                  <Route path="/Envios" element={<Envios />} />
+                  <Route path="/add" element={<ProtectedRoute><Add/></ProtectedRoute>} />
+                  <Route path="/login" element={<Login />} />
+                </Routes>
+                <Footer />
+              </>
+            )}
+          </div>
+        </CartProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
 
 export default App;
-
